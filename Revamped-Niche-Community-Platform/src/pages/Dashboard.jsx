@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import {
-    Box, Heading, Text, VStack, HStack, Spinner, SimpleGrid, Divider, Badge, Flex, Button
-} from "@chakra-ui/react";  // Add Button here
+    Box, Heading, Text, VStack, HStack, Spinner, SimpleGrid, Divider, Badge, Flex
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import CommunityFilters from "../components/CommunityFilters";
@@ -31,7 +31,6 @@ const Dashboard = () => {
 
     return (
         <VStack spacing={6} align="stretch" p={5} mt="80px">
-            {/* Header */}
             <Box textAlign="center">
                 <Heading size="lg">
                     Welcome, {user?.displayName || user?.email.split("@")[0] || "Guest"}!
@@ -39,15 +38,12 @@ const Dashboard = () => {
                 <Text color="gray.500">Explore communities and engage with posts.</Text>
             </Box>
 
-            {/* 🔹 Balanced Row: Filter Communities & Create Poll */}
             <SimpleGrid columns={[1, 1, 2]} spacing={6}>
                 <CommunityFilters />
-                <LivePolls /> {/* ✅ Moved next to filters for proper alignment */}
+                <LivePolls />
             </SimpleGrid>
 
-            {/* 🔹 Main Section: Community Feed & Trending Discussions */}
             <SimpleGrid columns={[1, 1, 2]} spacing={8}>
-                {/* ✅ Left Column: Community Feed */}
                 <Flex direction="column" flex="1" minH="full">
                     <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="md" flex="1">
                         <Heading size="md" mb={3}>Community Feed</Heading>
@@ -65,12 +61,9 @@ const Dashboard = () => {
                                 </Box>
                             ))
                         )}
-                        {/* Remove the Logout Button as per your request */}
-                        {/* <Button mt={3} colorScheme="green">Refresh Feed</Button> */}
                     </Box>
                 </Flex>
 
-                {/* ✅ Right Column: Trending Discussions */}
                 <Box p={4} borderWidth="1px" borderRadius="md" boxShadow="md" flex="1">
                     <Heading size="md" mb={3}>Trending Discussions</Heading>
                     <Divider mb={4} />

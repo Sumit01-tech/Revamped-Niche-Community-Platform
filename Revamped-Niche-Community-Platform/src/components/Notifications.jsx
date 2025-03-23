@@ -1,25 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Box, Text, VStack, HStack, Avatar, Icon, Badge, Spinner, Center, Input, Button } from "@chakra-ui/react";
 import { FaBell } from "react-icons/fa";
-import { db, rtdb } from "../services/firebase"; // Import both Firestore & RTDB
+import { db, rtdb } from "../services/firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, getDocs } from "firebase/firestore";
-import { ref, push, get, set } from "firebase/database"; // RTDB functions
+import { ref, push, get, set } from "firebase/database";
 import { useDispatch, useSelector } from "react-redux";
 import {
     fetchNotificationsStart,
     fetchNotificationsSuccess,
     fetchNotificationsFailure
-} from "../redux/slices/notificationsSlice"; // Import actions
+} from "../redux/slices/notificationsSlice";
 
 const Notifications = () => {
     const dispatch = useDispatch();
-    const notifications = useSelector(state => state.notifications.notifications); // Get notifications from Redux state
+    const notifications = useSelector(state => state.notifications.notifications);
     const isLoading = useSelector(state => state.notifications.isLoading);
-    const error = useSelector(state => state.notifications.error); // Get error state
+    const error = useSelector(state => state.notifications.error);
     const [message, setMessage] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
 
-    // Fetch Firestore Notifications
     const fetchFirestoreNotifications = useCallback(async () => {
         try {
             const notificationsQuery = query(collection(db, "notifications"), orderBy("timestamp", "desc"));
@@ -28,7 +27,7 @@ const Notifications = () => {
                 id: doc.id,
                 ...doc.data(),
             }));
-            console.log("Firestore Notifications:", firestoreData); // Log fetched Firestore notifications
+            console.log("Firestore Notifications:", firestoreData);
             return firestoreData;
         } catch (error) {
             console.error("❌ Error fetching Firestore notifications:", error);
@@ -36,7 +35,6 @@ const Notifications = () => {
         }
     }, []);
 
-    // Fetch Realtime Database Notifications
     const fetchRealtimeNotifications = useCallback(async () => {
         try {
             const snapshot = await get(ref(rtdb, "notifications"));
@@ -45,7 +43,7 @@ const Notifications = () => {
                     id: key,
                     ...snapshot.val()[key],
                 }));
-                console.log("Realtime Database Notifications:", realtimeData); // Log fetched RTDB notifications
+                console.log("Realtime Database Notifications:", realtimeData);
                 return realtimeData;
             } else {
                 console.log("No notifications found in RTDB.");
@@ -57,35 +55,31 @@ const Notifications = () => {
         }
     }, []);
 
-    // Fetch and combine notifications
     const fetchNotifications = useCallback(async () => {
         dispatch(fetchNotificationsStart());
-        console.log("Fetching notifications..."); // Log when fetching notifications starts
+        console.log("Fetching notifications...");
         try {
             const [firestoreData, realtimeData] = await Promise.all([
                 fetchFirestoreNotifications(),
                 fetchRealtimeNotifications(),
             ]);
 
-            // Combine notifications from both Firestore and RTDB
             const combinedNotifications = [...firestoreData, ...realtimeData].sort(
-                (a, b) => new Date(b.timestamp) - new Date(a.timestamp) // Sort by timestamp
+                (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
             );
 
-            console.log("✅ Combined Notifications:", combinedNotifications); // Log merged notifications data
-            dispatch(fetchNotificationsSuccess(combinedNotifications)); // Dispatch success action
+            console.log("✅ Combined Notifications:", combinedNotifications);
+            dispatch(fetchNotificationsSuccess(combinedNotifications));
         } catch (error) {
             console.error("❌ Error fetching notifications:", error);
-            dispatch(fetchNotificationsFailure(error.message)); // Dispatch failure action
+            dispatch(fetchNotificationsFailure(error.message));
         }
     }, [dispatch, fetchFirestoreNotifications, fetchRealtimeNotifications]);
 
-    // Fetch notifications when component mounts
     useEffect(() => {
         fetchNotifications();
     }, [fetchNotifications]);
 
-    // Add Firestore notification
     const addFirestoreNotification = async () => {
         if (!message || !avatarUrl) return;
 
@@ -96,7 +90,7 @@ const Notifications = () => {
                 userAvatar: avatarUrl,
             });
             console.log("Notification added to Firestore!");
-            fetchNotifications(); // Re-fetch notifications
+            fetchNotifications();
             setMessage("");
             setAvatarUrl("");
         } catch (e) {
@@ -104,7 +98,6 @@ const Notifications = () => {
         }
     };
 
-    // Add Realtime Database notification
     const addRealtimeNotification = async () => {
         if (!message || !avatarUrl) return;
 
@@ -116,7 +109,7 @@ const Notifications = () => {
                 userAvatar: avatarUrl,
             });
             console.log("Notification added to Realtime Database!");
-            fetchNotifications(); // Re-fetch notifications
+            fetchNotifications();
             setMessage("");
             setAvatarUrl("");
         } catch (e) {
@@ -145,7 +138,6 @@ const Notifications = () => {
         );
     }
 
-    // Log the notifications state from Redux before rendering
     console.log("Notifications from Redux:", notifications);
 
     return (

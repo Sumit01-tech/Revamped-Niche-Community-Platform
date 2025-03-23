@@ -44,12 +44,12 @@ const SignUp = () => {
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            dispatch(loginSuccess(userCredential.user)); // Save user in Redux
+            dispatch(loginSuccess(userCredential.user));
 
             setSuccess("Account created successfully! Redirecting to dashboard...");
-            setTimeout(() => navigate("/dashboard"), 2000); // Redirect after 2 sec
+            setTimeout(() => navigate("/dashboard"), 2000);
         } catch (err) {
-            console.error("Signup Error:", err.code, err.message); // 🔍 Log full error
+            console.error("Signup Error:", err.code, err.message);
 
             let errorMessage = "An unexpected error occurred.";
             switch (err.code) {
@@ -69,7 +69,7 @@ const SignUp = () => {
                     errorMessage = "Email/password sign-up is disabled. Enable it in Firebase.";
                     break;
                 default:
-                    errorMessage = err.message; // Show the actual error message
+                    errorMessage = err.message;
             }
 
             setError(errorMessage);

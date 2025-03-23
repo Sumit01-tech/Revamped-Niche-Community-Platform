@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { db } from "../services/firebase"; // Ensure this is correctly set up
+import { db } from "../services/firebase";
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
-// Create the Community Context
 const CommunityContext = createContext();
 
-// Custom Hook for using Community Context
 export const useCommunity = () => {
     const context = useContext(CommunityContext);
     if (!context) {
@@ -14,7 +12,6 @@ export const useCommunity = () => {
     return context;
 };
 
-// Community Provider Component
 export const CommunityProvider = ({ children }) => {
     const [communities, setCommunities] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,7 +45,6 @@ export const CommunityProvider = ({ children }) => {
         fetchCommunities();
     }, []);
 
-    // Add a new community (Firestore + Local State)
     const addCommunity = async (newCommunity) => {
         try {
             const docRef = await addDoc(collection(db, "communities"), newCommunity);
@@ -59,7 +55,6 @@ export const CommunityProvider = ({ children }) => {
         }
     };
 
-    // Update an existing community
     const updateCommunity = async (id, updatedData) => {
         try {
             const communityRef = doc(db, "communities", id);
@@ -75,7 +70,6 @@ export const CommunityProvider = ({ children }) => {
         }
     };
 
-    // Delete a community
     const deleteCommunity = async (id) => {
         try {
             await deleteDoc(doc(db, "communities", id));

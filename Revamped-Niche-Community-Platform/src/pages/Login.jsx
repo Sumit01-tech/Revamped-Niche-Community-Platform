@@ -21,24 +21,24 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false); // Adding loading state
+    const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(""); // Reset error state
-        setLoading(true); // Start loading
+        setError("");
+        setLoading(true);
 
-        dispatch(loginStart()); // Dispatch login start action
+        dispatch(loginStart());
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            dispatch(loginSuccess(userCredential.user)); // Dispatch success action
-            navigate("/dashboard"); // Redirect to Dashboard
+            dispatch(loginSuccess(userCredential.user));
+            navigate("/dashboard");
         } catch (err) {
-            console.error("Login Error:", err.code, err.message); // 🔍 Log error details
+            console.error("Login Error:", err.code, err.message);
 
             let errorMessage = "Failed to log in. Please check your credentials.";
             switch (err.code) {
@@ -65,12 +65,11 @@ const Login = () => {
             }
 
             setError(errorMessage);
-            dispatch(loginFailure(errorMessage)); // Dispatch failure action with error message
+            dispatch(loginFailure(errorMessage));
         } finally {
-            setLoading(false); // End loading
+            setLoading(false);
         }
     };
-
 
     return (
         <Box maxW="400px" mx="auto" mt="50px" p={5} borderWidth="1px" borderRadius="lg">

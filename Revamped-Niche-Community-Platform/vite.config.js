@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@redux': '/src/redux',  // Alias for the redux folder
+      '@redux': '/src/redux',
     },
   },
 })

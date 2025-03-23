@@ -20,15 +20,14 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                // Ignore non-serializable values in the auth.user path and actions involving communities and feeds
                 ignoredActions: [
-                    'auth/loginSuccess', // Ignore this action for serializability check
+                    'auth/loginSuccess',
                     'community/fetchCommunities/pending',
                     'feed/fetch/pending',
                     'community/fetchCommunities/fulfilled',
                     'feed/fetch/fulfilled',
                 ],
-                ignoredPaths: ['auth.user'], // Ignore `auth.user` path for serialization checks
+                ignoredPaths: ['auth.user'],
             },
         }),
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { VStack, Box, Text, IconButton, Divider } from "@chakra-ui/react";
-import { FaHome, FaUsers, FaComments, FaBell, FaTrophy, FaUser } from "react-icons/fa"; // Removed FaCog for settings
+import { FaHome, FaUsers, FaComments, FaBell, FaTrophy, FaUser } from "react-icons/fa";
 
 const Sidebar = ({ communityId }) => {
     return (

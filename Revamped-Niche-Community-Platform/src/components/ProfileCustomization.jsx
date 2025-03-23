@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Button, Input, VStack, Text } from "@chakra-ui/react";
-import { db } from "../services/firebase"; // Ensure correct Firebase instance import
+import { db } from "../services/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
 const ProfileCustomization = () => {
-    const { user } = useAuth(); // Get the authenticated user from context
-    const [bio, setBio] = useState(""); // State to store bio input
-    const [loading, setLoading] = useState(false); // Loading state to indicate saving progress
-    const [error, setError] = useState(""); // Error state for handling errors during saving
+    const { user } = useAuth();
+    const [bio, setBio] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    // Handle Save bio action
     const handleSave = async () => {
-        console.log("User:", user); // Log user details
-        console.log("Bio:", bio); // Log the bio input
+        console.log("User:", user);
+        console.log("Bio:", bio);
 
         if (!user) {
             setError("User is not authenticated");
@@ -26,23 +25,22 @@ const ProfileCustomization = () => {
         }
 
         setLoading(true);
-        setError(""); // Clear previous errors
+        setError("");
 
         try {
-            // Update the bio in the Firestore database
             await updateDoc(doc(db, "users", user.uid), {
-                bio: bio, // Update the bio field in Firestore
+                bio: bio,
             });
             console.log("Bio saved:", bio);
         } catch (error) {
             console.error("Error saving bio:", error);
             setError("An error occurred while saving the bio");
         }
-        setLoading(false); // Reset loading state
+        setLoading(false);
     };
 
     if (!user) {
-        return <Text>User is not authenticated. Please log in.</Text>; // Display this if user is not authenticated
+        return <Text>User is not authenticated. Please log in.</Text>;
     }
 
     return (
@@ -51,14 +49,14 @@ const ProfileCustomization = () => {
                 placeholder="Enter bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                isDisabled={loading} // Disable input while saving
+                isDisabled={loading}
             />
-            {error && <Text color="red.500">{error}</Text>} {/* Display error message if any */}
+            {error && <Text color="red.500">{error}</Text>}
             <Button
                 onClick={handleSave}
                 colorScheme="blue"
-                isLoading={loading} // Show loading spinner while saving
-                isDisabled={loading} // Disable button while saving
+                isLoading={loading}
+                isDisabled={loading}
             >
                 Save
             </Button>

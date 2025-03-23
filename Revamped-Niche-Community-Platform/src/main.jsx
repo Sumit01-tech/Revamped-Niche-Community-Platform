@@ -4,7 +4,7 @@ import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { CommunityProvider } from "./context/CommunityContext"; // ✅ Import CommunityProvider
+import { CommunityProvider } from "./context/CommunityContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -2,30 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Button, Text, Spinner, Textarea } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { votePost, addReply } from "../redux/slices/votingSlice"; // Combined import
-import { makeSelectVotesByPostId } from "../redux/selectors/votesSelector"; // Memoized selector
+import { votePost, addReply } from "../redux/slices/votingSlice";
+import { makeSelectVotesByPostId } from "../redux/selectors/votesSelector";
 
 const SingleDiscussion = () => {
-    const { threadId } = useParams(); // Get the threadId from the URL
+    const { threadId } = useParams();
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const [replyText, setReplyText] = useState(""); // State for managing the reply input
-    const [replies, setReplies] = useState([]); // State to manage the list of replies
+    const [replyText, setReplyText] = useState("");
+    const [replies, setReplies] = useState([]);
 
-    // Memoized selector for votes using the threadId
     const votes = useSelector((state) => makeSelectVotesByPostId(threadId)(state));
 
-    // Log the votes object for debugging
     console.log("Votes for threadId:", threadId, votes);
 
-    // Get replies from Redux state
     const currentReplies = useSelector((state) => state.voting.replies[threadId]) || [];
 
-    // Update replies once the component mounts or threadId changes
     useEffect(() => {
-        setLoading(false); // Simulate loading state completion
-        setReplies(currentReplies); // Update local replies
-    }, [threadId, currentReplies]); // Dependencies: threadId, currentReplies
+        setLoading(false);
+        setReplies(currentReplies);
+    }, [threadId, currentReplies]);
 
     const handleUpvote = () => {
         console.log("Upvote clicked for threadId:", threadId);
@@ -39,16 +35,11 @@ const SingleDiscussion = () => {
 
     const handleReplySubmit = () => {
         if (replyText.trim()) {
-            // Dispatch action to add the reply to Redux
             dispatch(addReply({ postId: threadId, replyText }));
-
-            // After submitting, clear the input field
             setReplyText("");
-
-            // Optionally, update local replies state (optimistic UI)
             setReplies((prevReplies) => [
                 ...prevReplies,
-                { id: new Date().getTime(), text: replyText }, // Generate ID based on timestamp
+                { id: new Date().getTime(), text: replyText },
             ]);
         }
     };
@@ -71,7 +62,6 @@ const SingleDiscussion = () => {
                 <Button onClick={handleDownvote}>👎 Downvote</Button>
             </Box>
 
-            {/* Reply Section */}
             <Box mt={5}>
                 <Textarea
                     value={replyText}
@@ -89,7 +79,6 @@ const SingleDiscussion = () => {
                 </Button>
             </Box>
 
-            {/* Display Replies */}
             <Box mt={5}>
                 <Text fontSize="xl">Replies:</Text>
                 {replies.length === 0 ? (

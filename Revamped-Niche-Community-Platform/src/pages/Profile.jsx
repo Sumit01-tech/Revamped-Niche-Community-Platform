@@ -33,7 +33,6 @@ const Profile = () => {
     const [updating, setUpdating] = useState(false);
     const toast = useToast();
 
-    // Fetch profile data from Firestore
     const fetchProfile = useCallback(async () => {
         if (!user) {
             console.log("No user logged in");
@@ -63,14 +62,13 @@ const Profile = () => {
                     isClosable: true,
                 });
 
-                // Create a new profile in Firestore since it doesn't exist
                 await setDoc(doc(db, "users", user.uid), {
                     displayName: user.displayName || "New User",
                     bio: "",
                     photoURL: user.photoURL || "",
                     createdAt: new Date(),
                 });
-                fetchProfile(); // Re-fetch profile data after creation
+                fetchProfile();
             }
         } catch (error) {
             console.error("Error fetching profile:", error);
@@ -86,7 +84,6 @@ const Profile = () => {
     }, [user, toast]);
 
     useEffect(() => {
-        // Only fetch profile if user is available and auth is done (authLoading = false)
         if (!authLoading && user) {
             fetchProfile();
         }
@@ -156,10 +153,9 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logout()); // Dispatch logout action to update Redux state
+        dispatch(logout());
     };
 
-    // Show spinner if the profile is still loading
     if (authLoading || !profile) {
         return (
             <Center h="100vh">
@@ -232,7 +228,6 @@ const Profile = () => {
                     </Button>
                 )}
 
-                {/* Add the Logout Button */}
                 <Button colorScheme="red" onClick={handleLogout}>
                     Logout
                 </Button>

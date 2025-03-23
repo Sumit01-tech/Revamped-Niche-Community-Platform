@@ -1,20 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { db } from "../../services/firebase"; // Ensure this path is correct
+import { db } from "../../services/firebase";
 import { collection, getDocs, addDoc, serverTimestamp, updateDoc, doc } from "firebase/firestore";
 
-// Async Thunk to Fetch Discussions from Firestore
 export const fetchDiscussions = createAsyncThunk(
     "discussions/fetch",
     async (communityId) => {
         try {
-            console.log("Fetching discussions for community:", communityId); // Add this to confirm the communityId is correct
+            console.log("Fetching discussions for community:", communityId);
             const querySnapshot = await getDocs(collection(db, "communities", communityId, "discussions"));
             const discussions = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
 
-            console.log("Fetched discussions:", discussions); // Log the fetched data to confirm
+            console.log("Fetched discussions:", discussions);
             return discussions;
         } catch (error) {
             console.error("Error fetching discussions:", error);
@@ -23,7 +22,6 @@ export const fetchDiscussions = createAsyncThunk(
     }
 );
 
-// Async Thunk to Add a New Discussion
 export const addDiscussion = createAsyncThunk(
     "discussions/add",
     async (discussionData) => {
@@ -33,11 +31,11 @@ export const addDiscussion = createAsyncThunk(
                 {
                     ...discussionData,
                     timestamp: serverTimestamp(),
-                    votes: { upvotes: 0, downvotes: 0 }, // Initialize votes
-                    reactions: { thumbsUp: 0, thumbsDown: 0 } // Initialize reactions
+                    votes: { upvotes: 0, downvotes: 0 },
+                    reactions: { thumbsUp: 0, thumbsDown: 0 }
                 }
             );
-            return { id: docRef.id, ...discussionData }; // Return the newly created discussion data
+            return { id: docRef.id, ...discussionData };
         } catch (error) {
             console.error("Error adding discussion:", error);
             throw error;
@@ -45,7 +43,6 @@ export const addDiscussion = createAsyncThunk(
     }
 );
 
-// Async Thunk to Update the Vote for a Discussion (upvote/downvote)
 export const voteDiscussion = createAsyncThunk(
     "discussions/vote",
     async ({ discussionId, voteType }, { getState }) => {
@@ -61,13 +58,9 @@ export const voteDiscussion = createAsyncThunk(
 
             const updatedVotes = {
                 ...discussion.votes,
-                [voteType]: discussion.votes[voteType] + 1, // Increment the vote count
+                [voteType]: discussion.votes[voteType] + 1,
             };
-
-            // Update the vote in Firestore
             await updateDoc(docRef, { votes: updatedVotes });
-
-            // Return the updated votes to update the Redux state
             return { discussionId, updatedVotes };
         } catch (error) {
             console.error("Error voting discussion:", error);
@@ -76,7 +69,6 @@ export const voteDiscussion = createAsyncThunk(
     }
 );
 
-// Async Thunk to Update Reactions for a Discussion (thumbsUp/thumbsDown)
 export const reactToDiscussion = createAsyncThunk(
     "discussions/react",
     async ({ discussionId, reactionType }, { getState }) => {
@@ -86,23 +78,15 @@ export const reactToDiscussion = createAsyncThunk(
         if (!discussion) {
             throw new Error("Discussion not found");
         }
-
         try {
             const docRef = doc(db, "communities", discussion.communityId, "discussions", discussionId);
-
             const updatedReactions = { ...discussion.reactions };
-
-            // Increment the reaction count based on the reactionType (thumbsUp or thumbsDown)
             if (reactionType === "thumbsUp") {
                 updatedReactions.thumbsUp += 1;
             } else if (reactionType === "thumbsDown") {
                 updatedReactions.thumbsDown += 1;
             }
-
-            // Update the reactions in Firestore
             await updateDoc(docRef, { reactions: updatedReactions });
-
-            // Return the updated reactions to update the Redux state
             return { discussionId, updatedReactions };
         } catch (error) {
             console.error("Error reacting to discussion:", error);
@@ -111,15 +95,14 @@ export const reactToDiscussion = createAsyncThunk(
     }
 );
 
-// Redux Slice to Manage Discussions State
 const discussionSlice = createSlice({
     name: "discussions",
     initialState: {
-        discussions: [], // Array to store discussions
-        status: "idle", // "idle" | "loading" | "succeeded" | "failed"
+        discussions: [],
+        status: "idle",
         error: null,
-        votes: {}, // Store votes by discussionId
-        reactions: {} // Store reactions by discussionId
+        votes: {},
+        reactions: {}
     },
     reducers: {
         setDiscussions(state, action) {
@@ -142,21 +125,21 @@ const discussionSlice = createSlice({
                 console.error("Failed to fetch discussions:", action.error.message);
             })
             .addCase(addDiscussion.fulfilled, (state, action) => {
-                state.discussions.push(action.payload); // This will add the new discussion to Redux
+                state.discussions.push(action.payload);
                 console.log("Added new discussion:", action.payload);
             })
             .addCase(voteDiscussion.fulfilled, (state, action) => {
                 const { discussionId, updatedVotes } = action.payload;
                 const index = state.discussions.findIndex(d => d.id === discussionId);
                 if (index >= 0) {
-                    state.discussions[index].votes = updatedVotes; // Update vote count
+                    state.discussions[index].votes = updatedVotes;
                 }
             })
             .addCase(reactToDiscussion.fulfilled, (state, action) => {
                 const { discussionId, updatedReactions } = action.payload;
                 const index = state.discussions.findIndex(d => d.id === discussionId);
                 if (index >= 0) {
-                    state.discussions[index].reactions = updatedReactions; // Update reactions
+                    state.discussions[index].reactions = updatedReactions;
                 }
             });
     },

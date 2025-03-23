@@ -22,7 +22,6 @@ export const CommunityProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ✅ Fetch Communities
     const fetchCommunities = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -46,7 +45,7 @@ export const CommunityProvider = ({ children }) => {
             setCommunities(communityList);
         } catch (error) {
             console.error("🔥 Error fetching communities:", error.message);
-            setError(error.message); // Set error state
+            setError(error.message);
         } finally {
             setLoading(false);
         }
@@ -56,7 +55,6 @@ export const CommunityProvider = ({ children }) => {
         fetchCommunities();
     }, [fetchCommunities]);
 
-    // ✅ Add Community
     const addCommunity = useCallback(async (name, description) => {
         setLoading(true);
         setError(null);
@@ -74,11 +72,10 @@ export const CommunityProvider = ({ children }) => {
             const docRef = await addDoc(collection(db, "communities"), communityData);
             console.log("✅ Community added:", docRef.id);
 
-            // Fetch communities again to update the state with the new community
             fetchCommunities();
         } catch (error) {
             console.error("🔥 Error adding community:", error.message);
-            setError(error.message); // Set error state
+            setError(error.message);
         } finally {
             setLoading(false);
         }

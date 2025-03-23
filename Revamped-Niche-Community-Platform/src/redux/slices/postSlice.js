@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../services/firebase";
 
-// Async Thunks
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async (_, { rejectWithValue }) => {
     try {
         const snapshot = await getDocs(collection(db, "posts"));
@@ -40,7 +39,6 @@ export const deletePost = createAsyncThunk("posts/deletePost", async (postId, { 
     }
 });
 
-// Slice
 const postSlice = createSlice({
     name: "posts",
     initialState: {

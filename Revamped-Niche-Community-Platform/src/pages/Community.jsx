@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Box, Heading, Button, VStack, Spinner, Input, FormControl, FormLabel, Textarea, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Select } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { db } from "../services/firebase"; // Import Firestore database
-import { addDoc, collection, getDocs } from "firebase/firestore"; // Import Firestore functions
-import CommunityList from "../components/CommunityList";  // Import the CommunityList component
+import { db } from "../services/firebase";
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import CommunityList from "../components/CommunityList";
 
 const Community = () => {
     const { user } = useAuth();
@@ -16,31 +16,25 @@ const Community = () => {
     const [communityDescription, setCommunityDescription] = useState("");
     const [communityCategory, setCommunityCategory] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [communities, setCommunities] = useState([]); // State to hold the list of communities
+    const [communities, setCommunities] = useState([]);
 
-    // If user is not authenticated, redirect to login page
     useEffect(() => {
         if (!user) {
-            navigate("/login");  // Redirect to login if the user is not logged in
+            navigate("/login");
         } else {
-            fetchCommunities(); // Fetch communities when the user is logged in
+            fetchCommunities();
         }
     }, [user, navigate]);
 
-    // Fetch communities from Firestore
     const fetchCommunities = async () => {
         const querySnapshot = await getDocs(collection(db, "communities"));
         const communitiesList = querySnapshot.docs.map((doc) => doc.data());
         setCommunities(communitiesList);
     };
 
-    // Open Modal
     const openModal = () => setIsModalOpen(true);
-
-    // Close Modal
     const closeModal = () => setIsModalOpen(false);
 
-    // Handle form submission to create a new community
     const handleCreateCommunity = async () => {
         if (!communityName || !communityDescription || !communityCategory) {
             toast({
@@ -55,19 +49,14 @@ const Community = () => {
         setIsLoading(true);
 
         try {
-            // Add community to Firestore
             await addDoc(collection(db, "communities"), {
                 name: communityName,
                 description: communityDescription,
                 category: communityCategory,
                 createdAt: new Date(),
-                createdBy: user.uid,  // Add the user ID to track who created the community
+                createdBy: user.uid,
             });
-
-            // After creating community, fetch the updated list
             fetchCommunities();
-
-            // Clear form and close modal
             setCommunityName("");
             setCommunityDescription("");
             setCommunityCategory("");
@@ -91,8 +80,6 @@ const Community = () => {
             });
         }
     };
-
-    // If user is not authenticated, show loading spinner
     if (!user) {
         return (
             <Box textAlign="center" py={10}>
@@ -107,19 +94,16 @@ const Community = () => {
                 Explore Communities
             </Heading>
 
-            {/* + Create Community Button */}
             <Button
                 colorScheme="teal"
-                onClick={openModal}  // Open modal when button is clicked
+                onClick={openModal}
                 alignSelf="center"
             >
                 + Create Community
             </Button>
 
-            {/* Display the list of communities */}
-            <CommunityList communities={communities} />  {/* Pass communities as a prop */}
+            <CommunityList communities={communities} />
 
-            {/* Modal for Creating Community */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <ModalOverlay />
                 <ModalContent>

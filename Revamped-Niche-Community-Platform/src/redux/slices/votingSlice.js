@@ -4,7 +4,6 @@ const initialState = {
     votes: {},
     replies: {},
 };
-
 const votingSlice = createSlice({
     name: 'voting',
     initialState,
@@ -15,15 +14,11 @@ const votingSlice = createSlice({
             if (!state.votes[postId]) {
                 state.votes[postId] = { upvotes: 0, downvotes: 0 };
             }
-
-            // Update votes based on the vote type
             if (voteType === 'upvote') {
                 state.votes[postId].upvotes += 1;
             } else if (voteType === 'downvote') {
                 state.votes[postId].downvotes += 1;
             }
-
-            // Log the updated state for debugging
             console.log('Updated state after votePost:', state.votes);
         },
 
