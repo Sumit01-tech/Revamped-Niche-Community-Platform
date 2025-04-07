@@ -6,7 +6,7 @@ The Revamped Niche Community Platform is designed to connect users with like-min
 Frontend
 
 # Deployed App
-Frontend: velvety-meerkat-75154c.netlify.app (on Netlify)
+Frontend: revamped-niche-community-platform.vercel.app (on Vercel)
 
 # Directory Structure
 📂 Revamped-Niche-Community-Platform
