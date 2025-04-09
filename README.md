@@ -6,7 +6,7 @@ The Revamped Niche Community Platform is designed to connect users with like-min
 Frontend
 
 # Deployed App
-Frontend: revamped-niche-community-platform.vercel.app (on Vercel)
+Frontend: https://revamped-niche-community-platform.vercel.app (on Vercel)
 
 # Directory Structure
 📂 Revamped-Niche-Community-Platform
